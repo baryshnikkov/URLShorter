@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-const PORT = ":8080"
+const port = ":8080"
 
 func app() http.Handler {
 	router := http.NewServeMux()
@@ -19,11 +19,11 @@ func app() http.Handler {
 func main() {
 	app := app()
 	server := &http.Server{
-		Addr:    PORT,
+		Addr:    port,
 		Handler: app,
 	}
 
-	fmt.Printf("Server is listening on port %s\n", PORT)
+	fmt.Printf("Server is listening on port %s\n", port)
 	err := server.ListenAndServe()
 	if err != nil {
 		panic("Could not start server: " + err.Error())

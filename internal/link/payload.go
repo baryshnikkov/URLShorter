@@ -1,10 +1,10 @@
 package link
 
-type CreateReq struct {
+type createReq struct {
 	URL string `json:"url" validate:"required,url"`
 }
 
-type CreateRes struct {
+type createRes struct {
 	URL  string `json:"url"`
-	Hash string `json:"hash"`
+	HASH string `json:"hash"`
 }

@@ -7,32 +7,32 @@ import (
 	"net/http"
 )
 
-type Handler struct {
+type handler struct {
 }
 
 func NewHandler(router *http.ServeMux) {
-	handler := &Handler{}
+	handler := &handler{}
 
-	router.HandleFunc("POST /link", handler.Create())
-	router.HandleFunc("GET /{hash}", handler.GoTo())
+	router.HandleFunc("POST /link", handler.create())
+	router.HandleFunc("GET /{hash}", handler.goTo())
 }
 
-func (h *Handler) Create() http.HandlerFunc {
+func (h *handler) create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		payloadReq, err := req.Payload[CreateReq](w, r)
+		payloadReq, err := req.JSON[createReq](w, r)
 		if err != nil {
 			return
 		}
 
-		payloadRes := &CreateRes{
+		payloadRes := &createRes{
 			URL:  payloadReq.URL,
-			Hash: payloadReq.URL,
+			HASH: payloadReq.URL,
 		}
 		res.JSON(w, payloadRes, http.StatusCreated)
 	}
 }
 
-func (h *Handler) GoTo() http.HandlerFunc {
+func (h *handler) goTo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hash := r.PathValue("hash")
 

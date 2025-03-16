@@ -7,10 +7,10 @@ import (
 	"net/http"
 )
 
-func Payload[T any](w http.ResponseWriter, r *http.Request) (*T, error) {
+func JSON[T any](w http.ResponseWriter, r *http.Request) (*T, error) {
 	path := r.URL.Path
 	method := r.Method
-	op := fmt.Sprintf("req.Payload path=%s method=%s", path, method)
+	op := fmt.Sprintf("req.JSON path=%s method=%s", path, method)
 
 	payload, err := decode[T](r)
 	if err != nil {
