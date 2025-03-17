@@ -6,5 +6,5 @@ type createReq struct {
 
 type createRes struct {
 	URL  string `json:"url"`
-	HASH string `json:"hash"`
+	Hash string `json:"hash"`
 }

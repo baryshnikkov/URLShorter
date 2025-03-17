@@ -26,7 +26,7 @@ func (h *handler) create() http.HandlerFunc {
 
 		payloadRes := &createRes{
 			URL:  payloadReq.URL,
-			HASH: payloadReq.URL,
+			Hash: payloadReq.URL,
 		}
 		res.JSON(w, payloadRes, http.StatusCreated)
 	}
