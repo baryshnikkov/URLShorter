@@ -25,7 +25,7 @@ func main() {
 		Handler: app,
 	}
 
-	fmt.Printf("Server is listening on adress %s:%s\n", serverConfig.Ip, serverConfig.Port)
+	fmt.Printf("Server is listening on adress %s%s\n", serverConfig.Ip, serverConfig.Port)
 	err := server.ListenAndServe()
 	if err != nil {
 		panic("Could not start server: " + err.Error())

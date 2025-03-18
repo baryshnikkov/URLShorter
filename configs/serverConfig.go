@@ -2,6 +2,9 @@ package configs
 
 import (
 	"flag"
+	"github.com/joho/godotenv"
+	"log"
+	"os"
 )
 
 type ServerConfig struct {
@@ -10,12 +13,40 @@ type ServerConfig struct {
 }
 
 func LoadServerConfig() *ServerConfig {
-	port := flag.String("port", ":8080", "Port to listen on")
-	ip := flag.String("ip", "127.0.0.1", "IP to listen on")
+	portFlag := flag.String("port", "", "Port to listen on")
+	ipFlag := flag.String("ip", "", "IP to listen on")
 	flag.Parse()
 
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	portEnv := os.Getenv("PORT")
+	ipEnv := os.Getenv("IP")
+
+	var port string
+	switch {
+	case *portFlag != "":
+		port = *portFlag
+	case portEnv != "":
+		port = portEnv
+	default:
+		port = ":8080"
+	}
+
+	var ip string
+	switch {
+	case *ipFlag != "":
+		ip = *ipFlag
+	case ipEnv != "":
+		ip = ipEnv
+	default:
+		ip = "127.0.0.1"
+	}
+
 	return &ServerConfig{
-		Port: *port,
-		Ip:   *ip,
+		Port: port,
+		Ip:   ip,
 	}
 }
