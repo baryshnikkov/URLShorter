@@ -4,17 +4,18 @@ import (
 	"URLShorter/pkg/req"
 	"URLShorter/pkg/res"
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 )
 
 type handler struct {
 }
 
-func NewHandler(router *http.ServeMux) {
+func NewHandler(router *chi.Mux) {
 	handler := &handler{}
 
-	router.HandleFunc("POST /link", handler.create())
-	router.HandleFunc("GET /{hash}", handler.goTo())
+	router.Post("/link", handler.create())
+	router.Get("/{hash}", handler.goTo())
 }
 
 func (h *handler) create() http.HandlerFunc {

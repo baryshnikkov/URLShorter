@@ -2,7 +2,10 @@ module URLShorter
 
 go 1.23
 
-require github.com/go-playground/validator/v10 v10.25.0
+require (
+	github.com/go-chi/chi/v5 v5.2.1
+	github.com/go-playground/validator/v10 v10.25.0
+)
 
 require (
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect

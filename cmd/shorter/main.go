@@ -3,13 +3,14 @@ package main
 import (
 	"URLShorter/internal/link"
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 )
 
 const port = ":8080"
 
 func app() http.Handler {
-	router := http.NewServeMux()
+	router := chi.NewRouter()
 
 	link.NewHandler(router)
 
