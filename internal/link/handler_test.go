@@ -3,6 +3,7 @@ package link
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -36,7 +37,6 @@ func TestCreateSuccess(t *testing.T) {
 				t.Fatal("Error marshalling data")
 			}
 			reader := bytes.NewReader(data)
-
 			w := httptest.NewRecorder()
 			r, err := http.NewRequest(http.MethodPost, "/link", reader)
 			if err != nil {
@@ -101,7 +101,6 @@ func TestCreateFail(t *testing.T) {
 				t.Fatal("Error marshalling data")
 			}
 			reader := bytes.NewReader(data)
-
 			w := httptest.NewRecorder()
 			r, err := http.NewRequest(http.MethodPost, "/link", reader)
 			if err != nil {
@@ -126,6 +125,42 @@ func TestCreateFail(t *testing.T) {
 			}
 			if respData != tt.want.response {
 				t.Fatalf("Error response body, expected %v, got %v", tt.want.response, respData)
+			}
+		})
+	}
+}
+
+func TestGoToSuccess(t *testing.T) {
+	type want struct {
+		code int
+	}
+	tests := []struct {
+		name  string
+		value string
+		want  want
+	}{
+		{
+			name:  "valid value request",
+			value: "https://example.com",
+			want: want{
+				code: http.StatusTemporaryRedirect,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handler := &handler{}
+			r, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/link/%s", tt.value), nil)
+			if err != nil {
+				t.Fatal("Error creating request")
+			}
+			w := httptest.NewRecorder()
+
+			handler.goTo()(w, r)
+
+			if w.Result().StatusCode != tt.want.code {
+				t.Fatalf("Error status code, expected %d, got %d", tt.want.code, w.Result().StatusCode)
 			}
 		})
 	}
