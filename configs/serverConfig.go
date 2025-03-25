@@ -3,7 +3,7 @@ package configs
 import (
 	"flag"
 	"github.com/joho/godotenv"
-	"log"
+	"go.uber.org/zap"
 	"os"
 )
 
@@ -19,7 +19,7 @@ func LoadServerConfig() *ServerConfig {
 
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		zap.L().Fatal("Error loading .env file")
 	}
 
 	portEnv := os.Getenv("PORT")

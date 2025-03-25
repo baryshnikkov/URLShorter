@@ -2,7 +2,7 @@ package res
 
 import (
 	"encoding/json"
-	"log"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -13,6 +13,8 @@ func JSON(w http.ResponseWriter, payload any, code int) {
 	w.WriteHeader(code)
 	err := json.NewEncoder(w).Encode(payload)
 	if err != nil {
-		log.Printf("OP: %s; DIS: Error encoding response; ERROR: %s", op, err)
+		zap.L().Error("Error encoding response",
+			zap.String("op", op),
+			zap.Error(err))
 	}
 }

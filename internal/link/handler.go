@@ -3,7 +3,6 @@ package link
 import (
 	"URLShorter/pkg/req"
 	"URLShorter/pkg/res"
-	"fmt"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 )
@@ -37,7 +36,7 @@ func (h *handler) goTo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hash := r.PathValue("hash")
 
-		fmt.Println(hash)
+		_ = hash
 
 		http.Redirect(w, r, "https://ya.ru", http.StatusTemporaryRedirect)
 	}

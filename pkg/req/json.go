@@ -2,29 +2,41 @@ package req
 
 import (
 	"URLShorter/pkg/res"
-	"fmt"
-	"log"
+	"bytes"
+	"go.uber.org/zap"
+	"io"
 	"net/http"
 )
 
 func JSON[T any](w http.ResponseWriter, r *http.Request) (*T, error) {
-	path := r.URL.Path
-	method := r.Method
-	op := fmt.Sprintf("req.JSON path=%s method=%s", path, method)
+	const op = "req.JSON"
+
+	body, _ := io.ReadAll(r.Body)
+	r.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	payload, err := decode[T](r)
 	if err != nil {
-		log.Printf("OP: %s; DIS: error decoding request; ERROR: %s", op, err)
-		res.JSON(w, "Error decoding request", http.StatusBadRequest)
+		logAndRes(w, r, op, "Error decoding request", err, http.StatusBadRequest, body)
 		return nil, err
 	}
 
 	err = validate(payload)
 	if err != nil {
-		log.Printf("OP: %s; DIS: error validate request; ERROR: %s", op, err)
-		res.JSON(w, "Error validate request", http.StatusBadRequest)
+		logAndRes(w, r, op, "Error validating request", err, http.StatusBadRequest, body)
 		return nil, err
 	}
 
 	return payload, nil
+}
+
+func logAndRes(w http.ResponseWriter, r *http.Request, op, msg string, err error, status int, body []byte) {
+	zap.L().Error(msg,
+		zap.String("op", op),
+		zap.String("path", r.URL.Path),
+		zap.String("method", r.Method),
+		zap.ByteString("payload", body),
+		zap.Error(err),
+	)
+
+	res.JSON(w, msg, status)
 }

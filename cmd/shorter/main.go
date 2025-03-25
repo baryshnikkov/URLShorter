@@ -3,13 +3,19 @@ package main
 import (
 	"URLShorter/configs"
 	"URLShorter/internal/link"
+	"URLShorter/pkg/logger"
+	"URLShorter/pkg/middleware"
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"go.uber.org/zap"
 	"net/http"
 )
 
 func app() http.Handler {
+	loggerServeHTTP := logger.New("./logs/shorter/serveHTTP.log")
 	router := chi.NewRouter()
+
+	router.Use(middleware.Logger(loggerServeHTTP))
 
 	link.NewHandler(router)
 
@@ -17,6 +23,8 @@ func app() http.Handler {
 }
 
 func main() {
+	globalLogger := logger.New("./logs/shorter/errors.log")
+	zap.ReplaceGlobals(globalLogger)
 	serverConfig := configs.LoadServerConfig()
 
 	app := app()
@@ -28,6 +36,6 @@ func main() {
 	fmt.Printf("Server is listening on adress %s%s\n", serverConfig.Ip, serverConfig.Port)
 	err := server.ListenAndServe()
 	if err != nil {
-		panic("Could not start server: " + err.Error())
+		zap.L().Fatal("Could not start server", zap.Error(err))
 	}
 }
