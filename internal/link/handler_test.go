@@ -81,7 +81,7 @@ func TestCreateFail(t *testing.T) {
 			value: createReq{URL: "text"},
 			want: want{
 				code:     http.StatusBadRequest,
-				response: "Error validate request",
+				response: "Error validating request",
 			},
 		},
 		{
