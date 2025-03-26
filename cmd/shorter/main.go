@@ -16,6 +16,7 @@ func app() http.Handler {
 	router := chi.NewRouter()
 
 	router.Use(middleware.Logger(loggerServeHTTP))
+	router.Use(middleware.Gzip)
 
 	link.NewHandler(router)
 

@@ -6,12 +6,12 @@ import (
 	"time"
 )
 
-type wrapperWriter struct {
+type wrapperWriterLogger struct {
 	http.ResponseWriter
 	statusCode int
 }
 
-func (w *wrapperWriter) WriteHeader(statusCode int) {
+func (w *wrapperWriterLogger) WriteHeader(statusCode int) {
 	w.ResponseWriter.WriteHeader(statusCode)
 	w.statusCode = statusCode
 }
@@ -21,7 +21,7 @@ func Logger(logger *zap.Logger) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
 
-			rec := &wrapperWriter{ResponseWriter: w, statusCode: http.StatusOK}
+			rec := &wrapperWriterLogger{ResponseWriter: w, statusCode: http.StatusOK}
 			next.ServeHTTP(rec, r)
 
 			logger.Info("serve HTTP",
