@@ -3,6 +3,7 @@ package main
 import (
 	"URLShorter/configs"
 	"URLShorter/internal/link"
+	"URLShorter/pkg/database"
 	"URLShorter/pkg/logger"
 	"URLShorter/pkg/middleware"
 	"fmt"
@@ -12,6 +13,10 @@ import (
 )
 
 func app() http.Handler {
+	appConfig := configs.LoadAppConfig()
+	db := database.New(appConfig)
+	_ = db
+
 	loggerServeHTTP := logger.New("./logs/shorter/serveHTTP.log")
 	router := chi.NewRouter()
 
