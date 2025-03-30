@@ -3,6 +3,7 @@ package main
 import (
 	"URLShorter/configs"
 	"URLShorter/internal/link"
+	"URLShorter/internal/ping"
 	"URLShorter/pkg/database"
 	"URLShorter/pkg/logger"
 	"URLShorter/pkg/middleware"
@@ -15,7 +16,6 @@ import (
 func app() http.Handler {
 	appConfig := configs.LoadAppConfig()
 	db := database.New(appConfig)
-	_ = db
 
 	loggerServeHTTP := logger.New("./logs/shorter/serveHTTP.log")
 	router := chi.NewRouter()
@@ -24,6 +24,7 @@ func app() http.Handler {
 	router.Use(middleware.Gzip)
 
 	link.NewHandler(router)
+	ping.NewHandler(router, &ping.HandlerDeps{Db: db})
 
 	return router
 }

@@ -2,6 +2,7 @@ package database
 
 import (
 	"URLShorter/configs"
+	"database/sql"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -9,6 +10,10 @@ import (
 
 type Db struct {
 	*gorm.DB
+}
+
+func (db *Db) SqlDB() (*sql.DB, error) {
+	return db.DB.DB()
 }
 
 func New(config *configs.AppConfig) *Db {
