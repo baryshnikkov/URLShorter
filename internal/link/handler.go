@@ -19,7 +19,7 @@ func NewHandler(router *chi.Mux) {
 
 func (h *handler) create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		payloadReq, err := req.JSON[createReq](w, r)
+		payloadReq, err := req.JSON[createReq](&w, r)
 		if err != nil {
 			return
 		}

@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func JSON[T any](w http.ResponseWriter, r *http.Request) (*T, error) {
+func JSON[T any](w *http.ResponseWriter, r *http.Request) (*T, error) {
 	const op = "req.JSON"
 
 	body, _ := io.ReadAll(r.Body)
@@ -29,7 +29,7 @@ func JSON[T any](w http.ResponseWriter, r *http.Request) (*T, error) {
 	return payload, nil
 }
 
-func logAndRes(w http.ResponseWriter, r *http.Request, op, msg string, err error, status int, body []byte) {
+func logAndRes(w *http.ResponseWriter, r *http.Request, op, msg string, err error, status int, body []byte) {
 	zap.L().Error(msg,
 		zap.String("op", op),
 		zap.String("path", r.URL.Path),
@@ -38,5 +38,5 @@ func logAndRes(w http.ResponseWriter, r *http.Request, op, msg string, err error
 		zap.Error(err),
 	)
 
-	res.JSON(w, msg, status)
+	res.JSON(*w, msg, status)
 }

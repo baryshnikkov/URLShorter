@@ -2,8 +2,10 @@ package main
 
 import (
 	"URLShorter/configs"
+	"URLShorter/internal/auth"
 	"URLShorter/internal/link"
 	"URLShorter/internal/ping"
+	"URLShorter/internal/user"
 	"URLShorter/pkg/database"
 	"URLShorter/pkg/logger"
 	"URLShorter/pkg/middleware"
@@ -23,8 +25,13 @@ func app() http.Handler {
 	router.Use(middleware.Logger(loggerServeHTTP))
 	router.Use(middleware.Gzip)
 
+	userRepository := user.NewRepository(db)
+
+	authService := auth.NewService(userRepository)
+
 	link.NewHandler(router)
 	ping.NewHandler(router, &ping.HandlerDeps{Db: db})
+	auth.NewHandler(router, &auth.HandlerDeps{Service: authService})
 
 	return router
 }
