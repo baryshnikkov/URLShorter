@@ -26,6 +26,7 @@ func NewHandler(router *chi.Mux, deps *HandlerDeps) {
 		SessionService: deps.SessionService,
 	}
 	router.HandleFunc("POST /auth/register", handler.Register())
+	router.HandleFunc("POST /auth/login", handler.Login())
 }
 
 func (h *handler) Register() http.HandlerFunc {
@@ -53,6 +54,9 @@ func (h *handler) Register() http.HandlerFunc {
 		userAgent := r.UserAgent()
 		accessToken, refreshToken, err := h.SessionService.Save(registeredUser.ID, ip, userAgent, registeredUser.Email)
 		if err != nil {
+			zap.L().Error("Error registering session",
+				zap.String("op", op),
+				zap.Error(err))
 			res.JSON(w, err.Error(), http.StatusInternalServerError)
 		}
 
@@ -66,5 +70,49 @@ func (h *handler) Register() http.HandlerFunc {
 		}
 
 		res.JSON(w, registerRes, http.StatusOK)
+	}
+}
+
+func (h *handler) Login() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		const op = "auth.handler.Login"
+
+		payload, err := req.JSON[LoginReq](&w, r)
+		if err != nil {
+			return
+		}
+
+		user, err := h.Service.Login(payload.Email, payload.Password)
+		if err != nil {
+			zap.L().Error("Error login user",
+				zap.String("op", op),
+				zap.Error(err))
+			res.JSON(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		ip := r.Header.Get("X-Forwarded-For")
+		if ip == "" {
+			ip, _, _ = net.SplitHostPort(r.RemoteAddr)
+		}
+		userAgent := r.UserAgent()
+		accessToken, refreshToken, err := h.SessionService.Save(user.ID, ip, userAgent, user.Email)
+		if err != nil {
+			zap.L().Error("Error registering session",
+				zap.String("op", op),
+				zap.Error(err))
+			res.JSON(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		loginRes := &LoginRes{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+			Email:        user.Email,
+			Login:        user.Login,
+			FirstName:    user.FirstName,
+			LastName:     user.LastName,
+		}
+
+		res.JSON(w, loginRes, http.StatusOK)
 	}
 }

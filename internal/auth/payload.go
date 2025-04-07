@@ -16,3 +16,17 @@ type RegisterRes struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 }
+
+type LoginReq struct {
+	Email    string `json:"email" validate:"email,max=255"`
+	Password string `json:"password" validate:"required,min=8,max=64"`
+}
+
+type LoginRes struct {
+	Email        string `json:"email"`
+	Login        string `json:"login"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}

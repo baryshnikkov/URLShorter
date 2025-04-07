@@ -23,7 +23,7 @@ func (r *Repository) Create(User *User) (*User, error) {
 	return User, nil
 }
 
-func (r *Repository) FindByLogin(login string) (*User, error) {
+func (r *Repository) GetByLogin(login string) (*User, error) {
 	user := &User{}
 
 	result := r.Database.DB.First(user, "login = ?", login)
@@ -34,7 +34,7 @@ func (r *Repository) FindByLogin(login string) (*User, error) {
 	return user, nil
 }
 
-func (r *Repository) FindByEmail(email string) (*User, error) {
+func (r *Repository) GetByEmail(email string) (*User, error) {
 	user := &User{}
 
 	result := r.Database.DB.First(user, "email = ?", email)

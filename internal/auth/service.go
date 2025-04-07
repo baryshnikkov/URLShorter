@@ -34,7 +34,7 @@ func (s *Service) Register(email, login, password, firstname, lastname string) (
 	loginCh := make(chan checkResult)
 	go func() {
 		defer close(emailCh)
-		existedUser, err := s.UserRepository.FindByEmail(email)
+		existedUser, err := s.UserRepository.GetByEmail(email)
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			emailCh <- checkResult{err: fmt.Errorf("error checking email: %w", err)}
 			return
@@ -43,7 +43,7 @@ func (s *Service) Register(email, login, password, firstname, lastname string) (
 	}()
 	go func() {
 		defer close(loginCh)
-		existedUser, err := s.UserRepository.FindByLogin(login)
+		existedUser, err := s.UserRepository.GetByLogin(login)
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			loginCh <- checkResult{err: fmt.Errorf("error checking login: %w", err)}
 			return
@@ -93,4 +93,18 @@ func (s *Service) Register(email, login, password, firstname, lastname string) (
 	}
 
 	return registeredUser, nil
+}
+
+func (s *Service) Login(email, password string) (*user.User, error) {
+	existedUser, err := s.UserRepository.GetByEmail(email)
+	if err != nil {
+		return nil, errors.New(ErrUserNotFound)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(existedUser.PasswordHash), []byte(password))
+	if err != nil {
+		return nil, errors.New(ErrWrongCredential)
+	}
+
+	return existedUser, nil
 }
