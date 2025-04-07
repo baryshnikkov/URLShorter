@@ -9,8 +9,10 @@ type RegisterReq struct {
 }
 
 type RegisterRes struct {
-	Email     string `json:"email"`
-	Login     string `json:"login"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	Email        string `json:"email"`
+	Login        string `json:"login"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }

@@ -12,12 +12,16 @@ import (
 )
 
 type Service struct {
-	userRepository *user.Repository
+	UserRepository *user.Repository
 }
 
-func NewService(userRepository *user.Repository) *Service {
+type ServiceDeps struct {
+	UserRepository *user.Repository
+}
+
+func NewService(deps *ServiceDeps) *Service {
 	return &Service{
-		userRepository: userRepository,
+		UserRepository: deps.UserRepository,
 	}
 }
 
@@ -30,7 +34,7 @@ func (s *Service) Register(email, login, password, firstname, lastname string) (
 	loginCh := make(chan checkResult)
 	go func() {
 		defer close(emailCh)
-		existedUser, err := s.userRepository.FindByEmail(email)
+		existedUser, err := s.UserRepository.FindByEmail(email)
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			emailCh <- checkResult{err: fmt.Errorf("error checking email: %w", err)}
 			return
@@ -39,7 +43,7 @@ func (s *Service) Register(email, login, password, firstname, lastname string) (
 	}()
 	go func() {
 		defer close(loginCh)
-		existedUser, err := s.userRepository.FindByLogin(login)
+		existedUser, err := s.UserRepository.FindByLogin(login)
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			loginCh <- checkResult{err: fmt.Errorf("error checking login: %w", err)}
 			return
@@ -83,7 +87,7 @@ func (s *Service) Register(email, login, password, firstname, lastname string) (
 		EmailVerified:     false,
 		VerificationToken: verificationToken,
 	}
-	registeredUser, err := s.userRepository.Create(newUser)
+	registeredUser, err := s.UserRepository.Create(newUser)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", ErrUserNotCreated, err)
 	}
