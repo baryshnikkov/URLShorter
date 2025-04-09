@@ -1,6 +1,7 @@
 package main
 
 import (
+	"URLShorter/internal/link"
 	"URLShorter/internal/session"
 	"URLShorter/internal/user"
 	"github.com/joho/godotenv"
@@ -20,7 +21,7 @@ func main() {
 		panic(err)
 	}
 
-	err = db.AutoMigrate(&user.User{}, &session.Session{})
+	err = db.AutoMigrate(&user.User{}, &session.Session{}, &link.Link{})
 	if err != nil {
 		panic(err)
 	}

@@ -28,6 +28,7 @@ func app() http.Handler {
 
 	userRepository := user.NewRepository(db)
 	sessionRepository := session.NewRepository(db)
+	linkRepository := link.NewRepository(db)
 
 	authService := auth.NewService(&auth.ServiceDeps{
 		UserRepository: userRepository,
@@ -37,7 +38,11 @@ func app() http.Handler {
 		AppConfig:  appConfig,
 	})
 
-	link.NewHandler(router)
+	link.NewHandler(router, &link.HandlerDeps{
+		Repository:     linkRepository,
+		UserRepository: userRepository,
+		AppConfig:      appConfig,
+	})
 	ping.NewHandler(router, &ping.HandlerDeps{Db: db})
 	auth.NewHandler(router, &auth.HandlerDeps{
 		Service:        authService,
