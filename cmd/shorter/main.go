@@ -34,8 +34,9 @@ func app() http.Handler {
 		UserRepository: userRepository,
 	})
 	sessionService := session.NewService(&session.ServiceDeps{
-		Repository: sessionRepository,
-		AppConfig:  appConfig,
+		Repository:     sessionRepository,
+		UserRepository: userRepository,
+		AppConfig:      appConfig,
 	})
 
 	link.NewHandler(router, &link.HandlerDeps{
@@ -47,6 +48,9 @@ func app() http.Handler {
 	auth.NewHandler(router, &auth.HandlerDeps{
 		Service:        authService,
 		SessionService: sessionService,
+	})
+	session.NewHandler(router, &session.HandlerDeps{
+		Service: sessionService,
 	})
 
 	return router

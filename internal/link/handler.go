@@ -70,6 +70,7 @@ func (h *Handler) create() http.HandlerFunc {
 				zap.String("op", op),
 				zap.Error(err))
 			res.JSON(w, "error create link", http.StatusInternalServerError)
+			return
 		}
 
 		fmt.Println("4")

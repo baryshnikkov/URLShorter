@@ -44,3 +44,13 @@ func (r *Repository) GetByEmail(email string) (*User, error) {
 
 	return user, nil
 }
+
+func (r *Repository) GetEmailById(id uint) (email string, err error) {
+	user := &User{}
+	result := r.Database.DB.First(user, "id = ?", id)
+	if result.Error != nil {
+		return "", result.Error
+	}
+
+	return user.Email, nil
+}

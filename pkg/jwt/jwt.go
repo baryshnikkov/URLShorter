@@ -5,6 +5,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
+	"strconv"
 	"time"
 )
 
@@ -24,7 +25,7 @@ func NewJWT(secretKey string) *JWT {
 	}
 }
 
-func (j *JWT) Creat(data *JWTData) (accessToken string, refreshToken string, error error) {
+func (j *JWT) Create(data *JWTData) (accessToken string, refreshToken string, error error) {
 	const op string = "jwt.Create"
 
 	accessClaims := jwt.MapClaims{
@@ -42,7 +43,7 @@ func (j *JWT) Creat(data *JWTData) (accessToken string, refreshToken string, err
 		return "", "", err
 	}
 
-	refreshToken = uuid.NewString()
+	refreshToken = strconv.FormatUint(uint64(data.UserID), 10) + "&" + uuid.NewString()
 
 	return accessToken, refreshToken, nil
 }

@@ -58,6 +58,7 @@ func (h *handler) Register() http.HandlerFunc {
 				zap.String("op", op),
 				zap.Error(err))
 			res.JSON(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		registerRes := &RegisterRes{
@@ -102,6 +103,7 @@ func (h *handler) Login() http.HandlerFunc {
 				zap.String("op", op),
 				zap.Error(err))
 			res.JSON(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		loginRes := &LoginRes{
